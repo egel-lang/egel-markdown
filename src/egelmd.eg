@@ -1,0 +1,119 @@
+#!/bin/env egel
+
+import "prelude.eg"
+import "os.ego"
+import "regex.ego"
+
+namespace Markdown (
+    def split_while =
+        [P {} -> ({},{})
+        |P {X|XX} -> if P X then let (XX,YY) = split_while P XX in ({X|XX},YY) else ({}, {X|XX})]
+)
+
+namespace Markdown (
+    using System
+
+    val script   = ref ""
+    val markdown = ref ""
+    val output   = ref ""
+
+    def set_script   = [T -> set_ref script T]
+    def set_markdown = [T -> set_ref markdown T]
+    def set_output   = [T -> set_ref output T]
+
+    def get_script   = get_ref script
+    def get_markdown = get_ref markdown
+    def get_output   = get_ref output
+
+    def debug =
+        print "script:\n";
+        print get_script;
+        print "markdown:\n";
+        print get_markdown;
+        print "output:\n";
+        print get_output
+)
+
+namespace Markdown (
+    using System
+    using List
+
+    val keyword_egel    = ".egel"
+    val keyword_include = ".include"
+    val keyword_import  = ".import"
+    val keyword_data    = ".data"
+    val keyword_def     = ".def"
+    val keyword_val     = ".val"
+
+    val keywords =
+        {keyword_egel, keyword_include, keyword_import, keyword_data, keyword_def, keyword_val}
+
+    def substitution =
+        [T -> String::replace "." " " T]
+
+    def keyword_substitute =
+        [L -> 
+            if String::starts_with keyword_egel L 
+            then String::replace keyword_egel "     " L
+            else String::replace "." " " L ]
+            
+    def process_keyword =
+        [{L|LL} ->
+            let L = keyword_substitute L in
+            let (LL0, LL1) = split_while [L -> or (String::starts_with " " L) (String::starts_with "\t" L)] LL in
+            let (LL1, LL2) = process LL1 in
+                ({L|LL0++LL1}, (map [L -> "\n"] {L|LL0}) ++ LL2) ]
+
+    def process =
+        [{}     -> ({}, {})
+        |{L|LL} -> 
+            if any [K -> String::starts_with K L] keywords
+            then process_keyword {L|LL}
+            else let (LL0, LL1) = process LL in (LL0, {L|LL1})]
+)
+
+namespace Markdown (
+    using System
+    using List
+
+    def eval_sub = none
+    def eval_hook = map eval_sub
+)
+
+namespace Markdown (
+    using System
+
+    val hooks = ref {eval_hook}
+
+    def get_hooks = get_ref hooks
+    def add_hook = [F -> set_ref hooks {F|get_hooks}]
+
+    def apply_hooks = [{} LL -> LL | {F|FF} LL -> F (apply_hooks FF LL)]
+    def run_hooks = [LL -> apply_hooks get_hooks LL]
+)
+
+namespace Markdown (
+    using System
+    using List
+
+    def eval_sub = none
+    def eval_hook = map eval_sub
+)
+
+namespace Markdown (
+    using System
+    using OS
+
+    def read_file = none
+
+    def run_script =
+        set_output (eval get_script); print get_output
+
+    def run_debug =
+        run_script
+)
+
+def main = 
+    [ {_,_,FN} -> Markdown::run_script FN
+    | {_,_,"--debug",FN} -> Markdown::run_debug FN
+    | _ -> System::print "usage: egelmd [--debug] filename.md\n"] System::args
