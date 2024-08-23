@@ -1,2 +1,3 @@
-# egel-markdown
-Markdown with Egel
+# Egel Markdown
+
+A lightweight solution to process Markdown with Egel.
