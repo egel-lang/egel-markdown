@@ -42,7 +42,8 @@ In the markdown document, all expressions that are surrounded by double-
 curly braces are evaluated.
 
 ```
-    This document is written by {{author}}.
+    This document is written by {{author}} who declares that the 
+    factorial of 5 is {{fac 5}}.
 ```
 
 ## Hooks
