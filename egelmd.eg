@@ -141,8 +141,8 @@ namespace Markdown (
     def run_debug =
         [FN ->
             read_file FN |> process_file;
-            print "script:\n" get_script;
-            print "markdown:\n" get_markdown;
+            print "script:\n" get_script "\n";
+            print "markdown:\n" get_markdown "\n";
             eval get_script;
             print "hooks:\n" get_hooks "\n";
             run_hooks get_markdown |> lines_to_text |> set_output;
