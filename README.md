@@ -20,7 +20,7 @@ that line and all following indented lines define egel code.
 ```
     .import "regex.ego"
     .include System
-    .data node, branch
+    .data branch, leaf
     .def author = "Marco Devillers"
     .val global = ref 3.14
 ```
