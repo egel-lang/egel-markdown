@@ -20,7 +20,7 @@ line and all consecutive indented lines are code.
         def fac = [0 -> 1| N -> N * (fac (N - 1))];;
 ```
 
-The code is dynamically evaluated so egel declarations must be ended
+The code is dynamically evaluated so egel declarations must end
 with double semicolons.
 
 ## Shorthands
