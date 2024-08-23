@@ -6,7 +6,8 @@
 .def author = "Marco Devillers";;
 .def title = "Egel enhanced Markdown";;
 .def footer = "Copyright 2024 " + author + ", MIT licence";;
-# {{title}}
+.def fancy = [T -> "·:*¨༺ ♱✮  " + T + "  ✮♱༻¨*:·"];;
+# {{fancy title}}
 
 I am {{author}} and I say the factorial of 5 is {{fac 5}}.
 
