@@ -1,10 +1,10 @@
-# Egel enhanced Markdown
+# Egel-enhanced Markdown
 
-Egel enhanced Markdown is a markdown document with included scripting.
+Egel-enhanced Markdown is a markdown document with included scripting.
 
 ## Running the script
 
-Run the script on Egel enhanced Markdown with the following command:
+Run the script on Egel-enhanced Markdown with the following command:
 
 ```
     egel egelmd.eg [--debug] <fn.emd>
@@ -12,7 +12,7 @@ Run the script on Egel enhanced Markdown with the following command:
 
 ## Egel code
 
-Start egel code by beginning a line with `.egel`. The rest of the
+Start Egel code by beginning a line with `.egel`. The rest of the
 line and all consecutive indented lines are code.
 
 ```
@@ -25,8 +25,8 @@ with double semicolons.
 
 ## Shorthands
 
-A number of shorthands make writing code easier, just as normal code
-that line and all following indented lines define egel code.
+Several shorthands make writing code easier, just as normal code
+that line and all following indented lines define Egel code.
 
 ```
     .import "regex.ego";;
@@ -38,7 +38,7 @@ that line and all following indented lines define egel code.
 
 ## Substitution
 
-In the markdown document, all expressions surrounded by double curly
+In the markdown document, all expressions are surrounded by double-curly
 braces are evaluated.
 
 ```
