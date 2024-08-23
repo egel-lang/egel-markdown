@@ -9,6 +9,8 @@ namespace Markdown (
     def split_while =
         [P {} -> ({},{})
         |P {X|XX} -> if P X then let (XX,YY) = split_while P XX in ({X|XX},YY) else ({}, {X|XX})]
+
+    def split_lines = Regex::split (Regex::compile "\n")
 )
 
 namespace Markdown (
@@ -95,13 +97,14 @@ namespace Markdown (
         [{} -> "" |{X} -> X
         |{X, Y|XX} -> X + (eval Y |> to_text) + eval_do XX]
 
-    def eval_substitution = do eval_split |> eval_do 
+    def eval_substitution = do eval_split |> eval_do
 
     def eval_hook = map eval_substitution 
 )
 
 namespace Markdown (
     using System
+    using List
 
     val hooks = ref {eval_hook}
 
@@ -109,7 +112,9 @@ namespace Markdown (
 
     def add_hook = [F -> set_ref hooks {F|get_hooks}]
 
-    def apply_hooks = [{} LL -> LL | {F|FF} LL -> F (apply_hooks FF LL)]
+    def normalize = concat_map split_lines
+
+    def apply_hooks = [{} LL -> LL | {F|FF} LL -> apply_hooks FF LL |> F |> normalize]
 
     def run_hooks = apply_hooks get_hooks
 )
@@ -123,7 +128,7 @@ namespace Markdown (
 
     def read_file = 
         [FN ->
-            if OS::exists FN then OS::read_all (OS::open_in FN) |> Regex::split (Regex::compile "\n")
+            if OS::exists FN then OS::read_all (OS::open_in FN) |> split_lines
             else throw "File not found: " + FN ]
 
     def process_file =
