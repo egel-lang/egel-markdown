@@ -38,8 +38,8 @@ that line and all following indented lines define Egel code.
 
 ## Substitution
 
-In the markdown document, all expressions are surrounded by double-curly
-braces are evaluated.
+In the markdown document, all expressions that are surrounded by double-
+curly braces are evaluated.
 
 ```
     This document is written by {{author}}.
