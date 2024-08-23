@@ -97,7 +97,7 @@ namespace Markdown (
 
     def eval_substitution = do eval_split |> eval_do 
 
-    def eval_hook = do map eval_substitution |> [X -> print X; X]
+    def eval_hook = map eval_substitution 
 )
 
 namespace Markdown (
