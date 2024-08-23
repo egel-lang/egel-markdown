@@ -1,0 +1,11 @@
+.import "prelude.eg";;
+.using System;;
+.using List;;
+.egel
+    def fac = [0 -> 1 | N -> N * fac (N - 1)];;
+.def author = "Marco Devillers";;
+
+I am {{author}} and I say the factorial of 5
+is {{fac 5}}
+
+.hook (map [L -> L + "!"])
