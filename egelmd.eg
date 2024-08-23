@@ -26,13 +26,6 @@ namespace Markdown (
     def get_markdown = get_ref markdown
     def get_output   = get_ref output
 
-    def debug =
-        print "script:\n";
-        print get_script;
-        print "markdown:\n";
-        print get_markdown;
-        print "output:\n";
-        print get_output
 )
 
 namespace Markdown (
@@ -50,25 +43,22 @@ namespace Markdown (
     val keywords =
         {keyword_egel, keyword_import, keyword_using, keyword_data, keyword_def, keyword_val, keyword_hook}
 
-    def substitution =
-        [T -> String::replace "." " " T]
+    def substitute =
+        [T0 T1 T2 -> String::remove 0 (String::count T0) T2 |> [T -> T1 + T]]
 
     val hook_counter = ref 0
 
     def hook_command =
         let N = get_ref hook_counter in set_ref hook_counter (N + 1);
-        " val add_hook_" + (to_text N) + " = "
+        " val add_hook_" + (to_text N) + " = Markdown::add_hook "
     
-    def patch_hook =
-        [L -> if String::starts_with " hook" then String::replace " hook" hook_command else L ]
-
     def keyword_substitute =
         [L -> 
             if String::starts_with keyword_egel L 
-            then String::replace keyword_egel "     " L
+            then substitute keyword_egel "     " L
             else if String::starts_with keyword_hook L 
-            then String::replace keyword_hook hook_command L
-            else String::replace "." " " L ]
+            then substitute keyword_hook hook_command L
+            else substitute "." " " L ]
             
     def process_keyword =
         [{L|LL} ->
@@ -89,8 +79,11 @@ namespace Markdown (
     using System
     using List
 
-    def eval_sub = none
-    def eval_hook = map eval_sub
+    val regex_pat = Regex::compile "\\{\\{.*\\}\\}"
+
+    def eval_substitution = 
+        [ L -> Regex::match regex_pat L |> print; L ] 
+    def eval_hook = map eval_substitution
 )
 
 namespace Markdown (
@@ -99,15 +92,17 @@ namespace Markdown (
     val hooks = ref {eval_hook}
 
     def get_hooks = get_ref hooks
+
     def add_hook = [F -> set_ref hooks {F|get_hooks}]
 
     def apply_hooks = [{} LL -> LL | {F|FF} LL -> F (apply_hooks FF LL)]
-    def run_hooks = [LL -> apply_hooks get_hooks LL]
+
+    def run_hooks = apply_hooks get_hooks
 )
 
 namespace Markdown (
     using System
-    using OS
+    using List
 
     def lines_to_text =
         [ {} -> "" | {L|LL} -> L + "\n" + lines_to_text LL ]
@@ -118,17 +113,26 @@ namespace Markdown (
             else throw "File not found: " + FN ]
 
     def process_file =
-        [ LL -> let (LL0, LL1) = process LL in set_script (lines_to_text LL0); set_markdown LL1 ]
+        [ LL -> let (LL0, LL1) = process LL in 
+                    set_script (lines_to_text (LL0 ++ {"none"})); 
+                    set_markdown LL1 ]
 
     def run_script =
         [FN ->
             read_file FN |> process_file;
-            print get_script;
             eval get_script;
-            none ]#run_hooks get_markdown ] 
+            run_hooks get_markdown |> lines_to_text |> set_output;
+            print get_output ] 
 
     def run_debug =
-        run_script
+        [FN ->
+            read_file FN |> process_file;
+            print "script:\n" get_script;
+            print "markdown:\n" get_markdown;
+            eval get_script;
+            print "hooks:\n" get_hooks "\n";
+            run_hooks get_markdown |> lines_to_text |> set_output;
+            print get_output ] 
 )
 
 def main = 
