@@ -8,4 +8,4 @@
 I am {{author}} and I say the factorial of 5
 is {{fac 5}}
 
-.hook (map [L -> L + "!"])
+.hook (map [L -> L + "!"]);;
