@@ -79,11 +79,25 @@ namespace Markdown (
     using System
     using List
 
-    val regex_pat = Regex::compile "\\{\\{.*\\}\\}"
+    def eval_split1 =
+        [{} -> throw "error in sub" | {X} -> throw "error in sub"
+        |{'}','}'|XX} -> eval_split0 XX |> [XX -> {{}|XX}]
+        |{X|XX} -> eval_split1 XX |> [{Y|YY} -> {{X|Y}|YY} ] ] 
 
-    def eval_substitution = 
-        [ L -> Regex::match regex_pat L |> print; L ] 
-    def eval_hook = map eval_substitution
+    def eval_split0 =
+        [ {} -> {{}} 
+        | {'{','{'|XX} -> eval_split1 XX |> [XX -> {{}|XX}]
+        | {X|XX} -> eval_split0 XX |> [{Y|YY} -> {{X|Y}|YY}]]
+
+    def eval_split = do String::to_chars |> eval_split0 |> map String::from_chars
+
+    def eval_do =
+        [{} -> "" |{X} -> X
+        |{X, Y|XX} -> X + (eval Y |> to_text) + eval_do XX]
+
+    def eval_substitution = do eval_split |> eval_do 
+
+    def eval_hook = do map eval_substitution |> [X -> print X; X]
 )
 
 namespace Markdown (
