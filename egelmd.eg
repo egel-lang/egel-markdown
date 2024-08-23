@@ -157,4 +157,4 @@ namespace Markdown (
 def main = 
     [ {_,_,FN} -> Markdown::run_script FN
     | {_,_,"--debug",FN} -> Markdown::run_debug FN
-    | _ -> System::print "usage: egelmd [--debug] filename.md\n"] System::args
+    | _ -> System::print "usage: egelmd [--debug] filename.emd\n"] System::args
