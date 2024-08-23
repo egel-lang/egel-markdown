@@ -1,8 +1,6 @@
 .using System;;
-
 .egel
     def fac = [0 -> 1 |N -> N * fac (N - 1)];;
-
 .def table = "| person | pet |\n| Linda  | cat |\n| Pete   | dog |";;
 
 Amazingly, the factorial of 5 is {{fac 5}}.
