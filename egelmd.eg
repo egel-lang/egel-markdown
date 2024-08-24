@@ -93,11 +93,11 @@ namespace Markdown (
 
     def eval_split = do String::to_chars |> eval_split0 |> map String::from_chars
 
-    def eval_do =
+    def eval_subs =
         [{} -> "" |{X} -> X
-        |{X, Y|XX} -> X + (eval Y |> to_text) + eval_do XX]
+        |{X, Y|XX} -> X + (eval Y |> to_text) + eval_subs XX]
 
-    def eval_substitution = do eval_split |> eval_do
+    def eval_substitution = do eval_split |> eval_subs
 
     def eval_hook = map eval_substitution 
 )
