@@ -1,4 +1,5 @@
 .import "prelude.eg";;
+.import "images.eg";;
 .using System;;
 .using List;;
 .egel
@@ -10,5 +11,9 @@
 # {{fancy title}}
 
 I am {{author}} and I say the factorial of 5 is {{fac 5}}.
+
+## How I look
+
+{{image_self}}
 
 .hook ([LL -> LL ++ {footer}]);;
