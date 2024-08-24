@@ -1,10 +1,10 @@
-# Egel-enhanced Markdown
+# Egel enhanced Markdown
 
-Egel-enhanced Markdown is a markdown document with included scripting.
+Egel enhanced Markdown is a markdown document with included scripting.
 
 ## Running the script
 
-Run the script on Egel-enhanced Markdown with the following command:
+Run the script on Egel enhanced Markdown with the following command:
 
 ```
     egelmd.eg [--debug] <fn.emd>
