@@ -30,7 +30,7 @@ that line and all following indented lines define Egel code.
 
 ```
     .import "regex.ego";;
-    .include System;;
+    .using System;;
     .data branch, leaf;;
     .def author = "Marco Devillers";;
     .val global = ref 3.14;;
