@@ -1,6 +1,6 @@
 import "prelude.eg"
 
-namespace Markdown (
+namespace Table (
     using System
     using List
 
@@ -8,18 +8,29 @@ namespace Markdown (
         do transpose |> map (map String::count) |> map maximum |> map ((+) 2)
 
     def info =
-        [(FF, TT) -> widths TT |> [WW -> (1 + sum (map ((+) 1) WW), zip FF WW, TT)]]
+        [(FF, TT) -> widths TT |> [WW -> (zip FF WW, TT)]]
 
     def render_line =
-        do map [((F,W),T) -> format (" {:" + (String::from_chars F) + (to_text (W - 2)) + "} ") T] |> reduce [W0 W1 -> W0 + "|" + W1]
+        do map [((F,W),T) -> format (" {:" + (String::from_chars F) + (to_text (W - 2)) + "} ") T] 
+            |> reduce [W0 W1 -> W0 + "|" + W1] |> [T -> "    |" + T + "|"]
 
     def render =
-        [(L, FF, TT) -> map (zip FF) TT |> [TT -> map render_line TT] |> reduce [T0 T1 -> T0 + "\n" +T1]]
+        [(FF, TT) -> map (zip FF) TT |> map render_line |> reduce [T0 T1 -> T0 + "\n" +T1]]
 
-    def table =
-        napp (do info |> render)
+    def hline =
+        do map [(F, W) -> String::from_chars (repeat W '-')] |> reduce [T0 T1 -> T0 + "+" + T1] |> [T -> "    |" + T + "|"]
+
+    def hrender =
+        [(FF, TT) -> map (zip FF) TT |> map render_line |> [{X|XX} -> {X, hline FF|XX}] |> reduce [T0 T1 -> T0 + "\n" +T1]]
+
+    def args =
         [FF TT -> (String::to_chars FF, map (map to_text) TT) 
         |TT -> (map [_ -> '^'] (head TT), (map (map to_text) TT))]
+
+    def table = napp (do info |> render) args
+
+    def htable = napp (do info |> hrender) args
 )
 
-def table = Markdown::table
+def table = Table::table
+def htable = Table::htable

@@ -13,7 +13,7 @@
 
 I am {{author}} and I say the factorial of 5 is {{fac 5}}.
 
-{{ table {{"f", "x", "f x"}, {fac, 5, fac 5} } }}
+{{ htable {{"f", "x", "f x"}, {fac, 5, fac 5} } }}
 
 ## How I look
 

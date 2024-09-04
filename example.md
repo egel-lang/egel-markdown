@@ -2,6 +2,10 @@
 
 I am Marco Devillers and I say the factorial of 5 is 120.
 
+ f   | x | f x 
+----------------
+ fac | 5 | 120 
+
 ## How I look
 
     ..::.......:.::....::::---:.:::.:::-=#%#%@##%+=---
