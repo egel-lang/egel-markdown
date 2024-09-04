@@ -1,9 +1,6 @@
 #!/bin/env egel
 
 import "prelude.eg"
-import "os.ego"
-import "fs.ego"
-import "regex.ego"
 
 namespace Markdown (
     def split_while =
@@ -157,4 +154,4 @@ namespace Markdown (
 def main = 
     [ {_,_,FN} -> Markdown::run_script FN
     | {_,_,"--debug",FN} -> Markdown::run_debug FN
-    | _ -> System::print "usage: egelmd [--debug] filename.emd\n"] System::args
+    | _ -> System::print "usage: emd [--debug] filename.emd\n"] System::args

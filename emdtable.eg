@@ -1,0 +1,25 @@
+import "prelude.eg"
+
+namespace Markdown (
+    using System
+    using List
+
+    def widths =
+        do transpose |> map (map String::count) |> map maximum |> map ((+) 2)
+
+    def info =
+        [(FF, TT) -> widths TT |> [WW -> (1 + sum (map ((+) 1) WW), zip FF WW, TT)]]
+
+    def render_line =
+        do map [((F,W),T) -> format (" {:" + (String::from_chars F) + (to_text (W - 2)) + "} ") T] |> reduce [W0 W1 -> W0 + "|" + W1]
+
+    def render =
+        [(L, FF, TT) -> map (zip FF) TT |> [TT -> map render_line TT] |> reduce [T0 T1 -> T0 + "\n" +T1]]
+
+    def table =
+        napp (do info |> render)
+        [FF TT -> (String::to_chars FF, map (map to_text) TT) 
+        |TT -> (map [_ -> '^'] (head TT), (map (map to_text) TT))]
+)
+
+def table = Markdown::table
