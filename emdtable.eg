@@ -11,7 +11,8 @@ namespace Table (
         [(FF, TT) -> widths TT |> [WW -> (zip FF WW, TT)]]
 
     def render_line =
-        do map [((F,W),T) -> format (" {:" + (String::from_chars F) + (to_text (W - 2)) + "} ") T] 
+        do map [((F,W),T) ->
+                 format (" {:" + (String::from_chars {F}) + (to_text (W - 2)) + "} ") T] 
             |> reduce [W0 W1 -> W0 + "|" + W1] |> [T -> "    |" + T + "|"]
 
     def render =
