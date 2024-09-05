@@ -2,6 +2,7 @@
 .import "images.eg";;
 .import "emdtable.eg";;
 .import "emdref.eg";;
+.import "emdformat.eg";;
 .using System;;
 .using List;;
 .egel
@@ -27,3 +28,4 @@ I am {{author}} and I say the factorial of 5 is {{fac 5}}{{ref "Zizek24"}}.
 {{references}}
 
 .hook ([LL -> LL ++ {footer}]);;
+.hook format;;

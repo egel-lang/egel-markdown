@@ -17,9 +17,9 @@ namespace Markdown (
     val markdown = ref ""
     val output   = ref ""
 
-    def set_script   = [T -> set_ref script T]
-    def set_markdown = [T -> set_ref markdown T]
-    def set_output   = [T -> set_ref output T]
+    def set_script   = set_ref script
+    def set_markdown = set_ref markdown
+    def set_output   = set_ref output
 
     def get_script   = get_ref script
     def get_markdown = get_ref markdown
