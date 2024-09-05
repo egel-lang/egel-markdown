@@ -1,6 +1,6 @@
 # ·:*¨༺ ♱✮  Egel enhanced Markdown  ✮♱༻¨*:·
 
-I am Marco Devillers and I say the factorial of 5 is 120.
+I am Marco Devillers and I say the factorial of 5 is 120[1].
 
     |  f  | x | f x |
     |-----+---+-----|
@@ -36,5 +36,9 @@ I am Marco Devillers and I say the factorial of 5 is 120.
     **********#-..:==:*-:.*@%@%*@@%#%%#*-+*-+%@%@@@@@@
     *#**********:..:=-=--*+*##+#@@%@#%=#**+=*@@@#%@@@@
 
+
+## References
+
+  [1] Žižek, Slavoj. The Ontological Importance of Spilled Coffee: How a Minor Inconvenience Reflects the Struggles of Late Capitalism. In: Journal of Postmodern Paradoxes, Vol. 42, Issue 7, 2024.
 
 Copyright 2024 Marco Devillers, MIT licence
