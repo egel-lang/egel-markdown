@@ -7,7 +7,7 @@ Egel enhanced Markdown is a markdown document with included scripting.
 Run the script on Egel enhanced Markdown with the following command:
 
 ```
-    egelmd.eg [--debug] <fn.emd>
+    emd.eg [--debug] <fn.emd>
 ```
 
 ## Egel code
