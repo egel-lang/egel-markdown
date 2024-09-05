@@ -1,0 +1,28 @@
+import "prelude.eg"
+import "dictionary.eg"
+
+namespace References (
+    using System
+    using List
+
+    val refdb = Dict::dict
+
+    def add_ref =
+        [T B -> (Dict::size refdb + 1) |> [K -> Dict::set refdb T (K,B)]]
+
+    def ref =
+        [K -> Dict::get refdb K |> fst |> [S -> "[" + to_text S + "]"]]
+
+    def references =
+        Dict::values refdb |> sort 
+        |> map [(K,B) -> (format " {:>4} " ("[" + (to_text K) + "]")) + B]
+        |> reduce [T0 T1 -> T0 + "\n" + T1]
+
+    def refs_debug =
+        print "debug: " (Dict::to_list refdb) "\n"
+)
+
+def add_ref = References::add_ref
+def ref = References::ref
+def references = References::references
+

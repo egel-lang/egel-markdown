@@ -1,0 +1,64 @@
+import "prelude.eg"
+
+namespace Format (
+    using System
+    using List
+
+    val white_space = Regex::compile "[ \\t]+"
+    val block_start = Regex::compile " *([\\+\\*]|\\[[^ ]*) +"
+
+    data break, pre, line, block
+
+    def spaces =
+        [N -> String::from_chars (repeat N ' ') ]
+
+    def adjust =
+        [H {X|XX} -> 
+            let W = Regex::look_match white_space X in
+            let N = String::count W in
+            let X = spaces (N - 4) + System::format "{:>3} " H +(String::remove 0 N X) in
+            {X|XX}]
+
+    def smaller =
+        [N {} -> 0
+        |N {W|WW} -> let N = N - (String::count W + 1) in if N < 0 then 0 else 1 + smaller N WW]
+
+    def render_paragraph =
+        [I {} -> {}
+        |I WW -> 
+            let N = smaller 70 {I|WW} in 
+            let (WW0,WW1) = split_at N WW in
+            {I + (String::trim (reduce [W0 W1 -> W0 + " " + W1] WW0))|render_paragraph I WW1} ]
+
+    def render =
+        [I {} -> {}
+        |I {break|XX} -> {""|render I XX}
+        |I {(pre L)|XX} -> {I + L|render I XX}
+        |I {(line L)|XX} -> 
+            let (LL, XX) = span [(line _) -> true | _ -> false] {line L|XX} in
+            let L = map [(line L) -> L] LL |> reduce [L0 L1 -> L0 + " " + L1] in
+            let LL = Regex::split white_space L in
+                render_paragraph I LL ++ render I XX
+        |I {(block H LL)|XX} ->
+            adjust H (render (I + "    ") LL) ++ render I XX ]
+
+    def gather =
+        [{} -> {}
+        |{X|XX} ->
+            if X == "" then {break|gather XX}
+            else if Regex::match white_space X then {break|gather XX}
+            else if String::starts_with "#" X then {pre X|gather XX}
+            else if String::starts_with "    " X then {pre X|gather XX}
+            else if Regex::look_at block_start X then
+                let B = Regex::look_match block_start X in
+                let N = String::count B in
+                let S = String::from_chars (repeat N ' ') in
+                let X = Regex::replace block_start S X in
+                let (BB,XX) = span [X -> String::starts_with S X] {X|XX} in
+                    {block (String::trim B) (gather (map (String::remove 0 N) BB))|gather XX} 
+            else {line X|gather XX}]
+
+    def format = do gather |> render ""
+)
+
+def format = Format::format
