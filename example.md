@@ -2,9 +2,19 @@
 
 I am Marco Devillers and I say the factorial of 5 is 120[1].
 
+## A table
+
     |  f  | x | f x |
     |-----+---+-----|
     | fac | 5 | 120 |
+
+## Some lists.
+
+ 1. one
+ 2. two
+
+  + an item
+  + the second item
 
 ## How I look
 

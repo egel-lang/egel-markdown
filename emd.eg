@@ -1,6 +1,7 @@
 #!/bin/env egel
 
 import "prelude.eg"
+import "dictionary.eg"
 
 namespace Markdown (
     def split_while =
@@ -155,3 +156,129 @@ def main =
     [ {_,_,FN} -> Markdown::run_script FN
     | {_,_,"--debug",FN} -> Markdown::run_debug FN
     | _ -> System::print "usage: emd [--debug] filename.emd\n"] System::args
+
+namespace Table (
+    using System
+    using List
+
+    def widths =
+        do transpose |> map (map String::count) |> map maximum |> map ((+) 2)
+
+    def info =
+        [(FF, TT) -> widths TT |> [WW -> (zip FF WW, TT)]]
+
+    def render_line =
+        do map [((F,W),T) ->
+                 format (" {:" + (String::from_chars {F}) + (to_text (W - 2)) + "} ") T] 
+            |> reduce [W0 W1 -> W0 + "|" + W1] |> [T -> "    |" + T + "|"]
+
+    def render =
+        [(FF, TT) -> map (zip FF) TT |> map render_line |> reduce [T0 T1 -> T0 + "\n" +T1]]
+
+    def hline =
+        do map [(F, W) -> String::from_chars (repeat W '-')] |> reduce [T0 T1 -> T0 + "+" + T1] |> [T -> "    |" + T + "|"]
+
+    def hrender =
+        [(FF, TT) -> map (zip FF) TT |> map render_line |> [{X|XX} -> {X, hline FF|XX}] |> reduce [T0 T1 -> T0 + "\n" +T1]]
+
+    def args =
+        [FF TT -> (String::to_chars FF, map (map to_text) TT) 
+        |TT -> (map [_ -> '^'] (head TT), (map (map to_text) TT))]
+
+    def table = napp (do info |> render) args
+
+    def htable = napp (do info |> hrender) args
+)
+
+def table = Table::table
+def htable = Table::htable
+
+namespace References (
+    using System
+    using List
+
+    val refdb = Dict::dict
+
+    def add_ref =
+        [T B -> (Dict::size refdb + 1) |> [K -> Dict::set refdb T (K,B)]]
+
+    def ref =
+        [K -> Dict::get refdb K |> fst |> [S -> "[" + to_text S + "]"]]
+
+    def references =
+        Dict::values refdb |> sort 
+        |> map [(K,B) -> (format " {:>4} " ("[" + (to_text K) + "]")) + B]
+        |> reduce [T0 T1 -> T0 + "\n" + T1]
+
+    def refs_debug =
+        print "debug: " (Dict::to_list refdb) "\n"
+)
+
+def add_ref = References::add_ref
+def ref = References::ref
+def references = References::references
+
+namespace Format (
+    using System
+    using List
+
+    val white_space = Regex::compile "[ \\t]+"
+    val block_start = Regex::compile " *([\\+\\*]|\\[[^ ]*|[0-9]+[^ ]*) +"
+
+    data break, pre, line, block
+
+    def spaces =
+        [N -> String::from_chars (repeat N ' ') ]
+
+    def adjust =
+        [H {X|XX} -> 
+            let W = Regex::look_match white_space X in
+            let N = String::count W in
+            let X = spaces (N - 4) + System::format "{:>3} " H +(String::remove 0 N X) in
+            {X|XX}]
+
+    def smaller =
+        [N {} -> 0
+        |N {W|WW} -> let N = N - (String::count W + 1) in if N < 0 then 0 else 1 + smaller N WW]
+
+    def render_paragraph =
+        [I {} -> {}
+        |I WW -> 
+            let N = smaller 70 {I|WW} in 
+            let (WW0,WW1) = split_at N WW in
+            {I + (String::trim (reduce [W0 W1 -> W0 + " " + W1] WW0))|render_paragraph I WW1} ]
+
+    def render =
+        [I {} -> {}
+        |I {break|XX} -> {""|render I XX}
+        |I {(pre L)|XX} -> {I + L|render I XX}
+        |I {(line L)|XX} -> 
+            let (LL, XX) = span [(line _) -> true | _ -> false] {line L|XX} in
+            let L = map [(line L) -> L] LL |> reduce [L0 L1 -> L0 + " " + L1] in
+            let LL = Regex::split white_space L in
+                render_paragraph I LL ++ render I XX
+        |I {(block H LL)|XX} ->
+            adjust H (render (I + "    ") LL) ++ render I XX ]
+
+    def gather =
+        [{} -> {}
+        |{X|XX} ->
+            if X == "" then {break|gather XX}
+            else if Regex::match white_space X then {break|gather XX}
+            else if String::starts_with "#" X then {pre X|gather XX}
+            else if String::starts_with "    " X then {pre X|gather XX}
+            else if Regex::look_at block_start X then
+                let B = Regex::look_match block_start X in
+                let N = String::count B in
+                let S = String::from_chars (repeat N ' ') in
+                let X = Regex::replace block_start S X in
+                let (BB,XX) = span [X -> String::starts_with S X] {X|XX} in
+                    {block (String::trim B) (gather (map (String::remove 0 N) BB))|gather XX} 
+            else {line X|gather XX}]
+
+    def format = do gather |> render ""
+
+)
+
+val add_format_hook = Markdown::add_hook Format::format
+
