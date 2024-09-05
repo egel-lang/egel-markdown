@@ -5,7 +5,7 @@ namespace Format (
     using List
 
     val white_space = Regex::compile "[ \\t]+"
-    val block_start = Regex::compile " *([\\+\\*]|\\[[^ ]*) +"
+    val block_start = Regex::compile " *([\\+\\*]|\\[[^ ]*|[0-9]+[^ ]*) +"
 
     data break, pre, line, block
 
