@@ -7,7 +7,7 @@
 .def title = "Egel enhanced Markdown";;
 .def footer = "Copyright 2024 " + author + ", MIT licence";;
 .def fancy = [T -> "·:*¨༺ ♱✮  " + T + "  ✮♱༻¨*:·"];;
-.egel add_ref "Zizek24" "Žižek, Slavoj. The Ontological Importance of Spilled Coffee: How a Minor Inconvenience Reflects the Struggles of Late Capitalism. In: Journal of Postmodern Paradoxes, Vol. 42, Issue 7, 2024.";;
+.egel add_reference "Zizek24" "Žižek, Slavoj. The Ontological Importance of Spilled Coffee: How a Minor Inconvenience Reflects the Struggles of Late Capitalism. In: Journal of Postmodern Paradoxes, Vol. 42, Issue 7, 2024.";;
 # {{fancy title}}
 
 I am {{author}} and I say the factorial of 5 is {{fac 5}}{{ref "Zizek24"}}.

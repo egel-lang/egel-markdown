@@ -159,7 +159,7 @@ def main =
 
 namespace Table (
     using System
-    using List
+    using List 
 
     def widths =
         do transpose |> map (map String::count) |> map maximum |> map ((+) 2)
@@ -181,13 +181,13 @@ namespace Table (
     def hrender =
         [(FF, TT) -> map (zip FF) TT |> map render_line |> [{X|XX} -> {X, hline FF|XX}] |> reduce [T0 T1 -> T0 + "\n" +T1]]
 
-    def args =
+    def args0 =
         [FF TT -> (String::to_chars FF, map (map to_text) TT) 
         |TT -> (map [_ -> '^'] (head TT), (map (map to_text) TT))]
 
-    def table = napp (do info |> render) args
+    def table = napp (do info |> render) args0
 
-    def htable = napp (do info |> hrender) args
+    def htable = napp (do info |> hrender) args0
 )
 
 def table = Table::table
@@ -199,10 +199,10 @@ namespace References (
 
     val refdb = Dict::dict
 
-    def add_ref =
+    def add_reference =
         [T B -> (Dict::size refdb + 1) |> [K -> Dict::set refdb T (K,B)]]
 
-    def ref =
+    def db_reference =
         [K -> Dict::get refdb K |> fst |> [S -> "[" + to_text S + "]"]]
 
     def references =
@@ -214,8 +214,8 @@ namespace References (
         print "debug: " (Dict::to_list refdb) "\n"
 )
 
-def add_ref = References::add_ref
-def ref = References::ref
+def add_reference = References::add_reference
+def reference = References::db_reference
 def references = References::references
 
 namespace Format (
@@ -223,9 +223,9 @@ namespace Format (
     using List
 
     val white_space = Regex::compile "[ \\t]+"
-    val block_start = Regex::compile " *([\\+\\*]|\\[[^ ]*|[0-9]+[^ ]*) +"
+    val box_start = Regex::compile " *([\\+\\*]|\\[[^ ]*|[0-9]+[^ ]*) +"
 
-    data break, pre, line, block
+    data br, pre, line, box
 
     def spaces =
         [N -> String::from_chars (repeat N ' ') ]
@@ -250,35 +250,35 @@ namespace Format (
 
     def render =
         [I {} -> {}
-        |I {break|XX} -> {""|render I XX}
+        |I {br|XX} -> {""|render I XX}
         |I {(pre L)|XX} -> {I + L|render I XX}
         |I {(line L)|XX} -> 
             let (LL, XX) = span [(line _) -> true | _ -> false] {line L|XX} in
             let L = map [(line L) -> L] LL |> reduce [L0 L1 -> L0 + " " + L1] in
             let LL = Regex::split white_space L in
                 render_paragraph I LL ++ render I XX
-        |I {(block H LL)|XX} ->
+        |I {(box H LL)|XX} ->
             adjust H (render (I + "    ") LL) ++ render I XX ]
 
     def gather =
         [{} -> {}
         |{X|XX} ->
-            if X == "" then {break|gather XX}
-            else if Regex::match white_space X then {break|gather XX}
+            if X == "" then {br|gather XX}
+            else if Regex::match white_space X then {br|gather XX}
             else if String::starts_with "#" X then {pre X|gather XX}
             else if String::starts_with "    " X then {pre X|gather XX}
-            else if Regex::look_at block_start X then
-                let B = Regex::look_match block_start X in
+            else if Regex::look_at box_start X then
+                let B = Regex::look_match box_start X in
                 let N = String::count B in
                 let S = String::from_chars (repeat N ' ') in
-                let X = Regex::replace block_start S X in
+                let X = Regex::replace box_start S X in
                 let (BB,XX) = span [X -> String::starts_with S X] {X|XX} in
-                    {block (String::trim B) (gather (map (String::remove 0 N) BB))|gather XX} 
+                    {box (String::trim B) (gather (map (String::remove 0 N) BB))|gather XX} 
             else {line X|gather XX}]
 
-    def format = do gather |> render ""
+    def format0 = do gather |> render ""
 
 )
 
-val add_format_hook = Markdown::add_hook Format::format
+val add_format_hook = Markdown::add_hook Format::format0
 
